@@ -1,0 +1,39 @@
+version: "3.7"
+services:
+  app:
+    container_name: frontend_container
+    build: ./docker/frontend
+    ports:
+      - 8080:8080
+    volumes:
+      - ./frontend:/app
+    stdin_open: true
+    tty: true
+    environment:
+      TZ: Europe/Paris
+  api:
+    container_name: api_container
+    build: ./docker/api
+    ports:
+      - 3000:3000
+    volumes:
+      - ./api:/api
+    tty: true
+    environment:
+      TZ: Europe/Paris
+    depends_on:
+      - db
+  db:
+    container_name: db_container
+    build: ./docker/db
+    ports:
+      - 1406:3306
+    volumes:
+      - db_data:/var/lib/postgresql/data:rw
+    environment:
+      - DB_NAME_DEVELOPMENT=${DB_NAME_DEVELOPMENT-default}
+      - DB_USER=${DB_USER-user}
+      - DB_PASS=${DB_PASS-password}
+      - TZ="Europe/Paris"
+volumes:
+  db_data:
